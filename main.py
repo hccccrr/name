@@ -26,49 +26,57 @@ FONT_MAP = {
 def convert(text: str) -> str:
     return "".join(FONT_MAP.get(ch, ch) for ch in text)
 
-# ================= BIO FONTS (REAL DIFFERENT STYLES) =================
+# ================= BEST SINGLE BIO FONT (YR WALI) =================
+BIO_FONT_MAP = {
+    "a":"ɑ","b":"ß","c":"c","d":"d","e":"ə","f":"f","g":"ɢ","h":"h",
+    "i":"ı","j":"j","k":"k","l":"ɭ","m":"ɱ","n":"η","o":"❍","p":"ρ",
+    "q":"q","r":"r","s":"σ","t":"ʈ","u":"ʋ","v":"ʋ","w":"w","x":"x",
+    "y":"γ","z":"z",
+    "A":"ɑ","B":"ß","C":"C","D":"D","E":"E","F":"F","G":"G",
+    "H":"H","I":"ı","J":"J","K":"K","L":"L","M":"M","N":"N",
+    "O":"❍","P":"P","Q":"Q","R":"R","S":"S","T":"ʈ","U":"ʋ",
+    "V":"ʋ","W":"W","X":"X","Y":"Y","Z":"Z",
+}
+
+def bio_single_convert(text: str) -> str:
+    return "".join(BIO_FONT_MAP.get(ch, ch) for ch in text)
+
+# ================= MULTI BIO FONTS =================
 BIO_FONTS = [
 
-    # Style 1 – NickFinder clean
+    # NickFinder clean
     {
         "a":"ɑ","b":"ß","c":"c","d":"d","e":"ə","f":"f","g":"ɢ","h":"h",
-        "i":"ı","j":"j","k":"k","l":"ɭ","m":"ɱ","n":"η","o":"❍","p":"ρ",
+        "i":"ı","l":"ɭ","m":"ɱ","n":"η","o":"❍","p":"ρ",
         "r":"r","s":"σ","t":"ʈ","u":"ʋ","v":"ʋ","w":"w","y":"γ",
     },
 
-    # Style 2 – small caps
+    # Small caps
     {
         "a":"ᴀ","b":"ʙ","c":"ᴄ","d":"ᴅ","e":"ᴇ","f":"ғ","g":"ɢ","h":"ʜ",
         "i":"ɪ","j":"ᴊ","k":"ᴋ","l":"ʟ","m":"ᴍ","n":"ɴ","o":"ᴏ","p":"ᴘ",
         "r":"ʀ","s":"s","t":"ᴛ","u":"ᴜ","v":"ᴠ","w":"ᴡ","y":"ʏ",
     },
 
-    # Style 3 – cute / readable
+    # Cute
     {
-        "a":"α","b":"в","c":"c","d":"∂","e":"є","f":"ƒ","g":"g","h":"н",
-        "i":"ι","k":"к","l":"ℓ","m":"м","n":"η","o":"σ","p":"ρ",
+        "a":"α","b":"в","d":"∂","e":"є","f":"ƒ","h":"н",
+        "i":"ι","l":"ℓ","m":"м","n":"η","o":"σ","p":"ρ",
         "r":"я","s":"ѕ","t":"т","u":"υ","w":"ω","y":"у",
     },
 
-    # Style 4 – dark bio
+    # Dark
     {
-        "a":"Δ","b":"β","d":"Ð","e":"Ξ","f":"Ғ","g":"Ǥ","h":"Ħ",
-        "i":"Ɨ","k":"Ҡ","l":"Ł","m":"₥","n":"₦","o":"Ø","p":"Ᵽ",
+        "a":"Δ","b":"β","d":"Ð","e":"Ξ","f":"Ғ","h":"Ħ",
+        "i":"Ɨ","l":"Ł","m":"₥","n":"₦","o":"Ø","p":"Ᵽ",
         "r":"Ɽ","s":"Ϟ","t":"Ŧ","u":"Ʉ","w":"₩","y":"Ɏ",
-    },
-
-    # Style 5 – mix stylish
-    {
-        "a":"ä","b":"ɓ","c":"ç","d":"đ","e":"ë","f":"ƒ","g":"ğ","h":"ħ",
-        "i":"ï","k":"ķ","l":"ł","m":"ɱ","n":"ñ","o":"ö","p":"ρ",
-        "r":"ř","s":"ş","t":"ţ","u":"ü","w":"ω","y":"ÿ",
     },
 ]
 
 def bio_convert(text: str, font: dict) -> str:
     return "".join(font.get(ch.lower(), ch) for ch in text)
 
-# ================= NAME STYLES (AS YOU GAVE) =================
+# ================= NAME STYLES =================
 STYLES = [
     ("𓂃❛ ⟶", "❜ 🌙⤹🌸"),
     ("❍⏤●", "●───♫▷"),
@@ -89,14 +97,30 @@ async def stylish_name(_, message: Message):
 
     await message.reply_text(out)
 
-# ================= /bio (NEW SYSTEM) =================
+# ================= /bio =================
 @app.on_message(filters.command("bio"))
 async def bio_style(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply_text("Usage: /bio your normal bio text")
+        return await message.reply_text(
+            "Usage:\n/bio your text\n/bio single your text"
+        )
 
+    # /bio single
+    if message.command[1].lower() == "single":
+        if len(message.command) < 3:
+            return await message.reply_text("Usage: /bio single your text")
+
+        text = " ".join(message.command[2:])
+        fancy = bio_single_convert(text)
+
+        await message.reply_text(
+            f"𓆩 𝐁ɪᴏ ꜱɪɴɢʟᴇ 𓆪\n\n"
+            f"{fancy} ⚠️🕸️☆°•____"
+        )
+        return
+
+    # /bio (multiple)
     text = " ".join(message.command[1:])
-
     out = "𓆩 𝐁ɪᴏ ꜱᴛʏʟᴇ 𓆪\n\n"
 
     for font in BIO_FONTS:
