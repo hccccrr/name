@@ -14,7 +14,7 @@ app = Client(
 
 # ================= NAME FONT =================
 FONT_MAP = {
-    "a": "ᴧ","b":"ʙ","c":"ᴄ","d":"ᴅ","e":"є","f":"ғ","g":"ɢ","h":"ʜ","i":"ɪ",
+    "a":"ᴧ","b":"ʙ","c":"ᴄ","d":"ᴅ","e":"є","f":"ғ","g":"ɢ","h":"ʜ","i":"ɪ",
     "j":"ᴊ","k":"ᴋ","l":"ʟ","m":"ϻ","n":"η","o":"σ","p":"ᴘ","q":"ǫ","r":"ꝛ",
     "s":"s","t":"ᴛ","u":"υ","v":"ᴠ","w":"ᴡ","x":"x","y":"ʏ","z":"ᴢ",
     "A":"𝐀","B":"𝐁","C":"𝐂","D":"𝐃","E":"𝐄","F":"𝐅","G":"𝐆",
@@ -26,44 +26,60 @@ FONT_MAP = {
 def convert(text: str) -> str:
     return "".join(FONT_MAP.get(ch, ch) for ch in text)
 
-# ================= BIO FONT =================
-BIO_FONT_MAP = {
-    "a":"ɑ","b":"ß","c":"c","d":"d","e":"ə","f":"f","g":"ɢ","h":"h",
-    "i":"ı","j":"j","k":"k","l":"ɭ","m":"ɱ","n":"η","o":"❍","p":"ρ",
-    "q":"q","r":"r","s":"σ","t":"ʈ","u":"ʋ","v":"ʋ","w":"w","x":"x",
-    "y":"γ","z":"z",
-    "A":"ɑ","B":"ß","C":"C","D":"D","E":"E","F":"F","G":"G",
-    "H":"H","I":"ı","J":"J","K":"K","L":"L","M":"M","N":"N",
-    "O":"❍","P":"P","Q":"Q","R":"R","S":"S","T":"ʈ","U":"ʋ",
-    "V":"ʋ","W":"W","X":"X","Y":"Y","Z":"Z",
-}
+# ================= BIO FONTS (REAL DIFFERENT STYLES) =================
+BIO_FONTS = [
 
-def bio_convert(text: str) -> str:
-    return "".join(BIO_FONT_MAP.get(ch, ch) for ch in text)
+    # Style 1 – NickFinder clean
+    {
+        "a":"ɑ","b":"ß","c":"c","d":"d","e":"ə","f":"f","g":"ɢ","h":"h",
+        "i":"ı","j":"j","k":"k","l":"ɭ","m":"ɱ","n":"η","o":"❍","p":"ρ",
+        "r":"r","s":"σ","t":"ʈ","u":"ʋ","v":"ʋ","w":"w","y":"γ",
+    },
 
-# ================= BIO STYLES =================
-BIO_STYLES = [
-    ("", " ⚠️🕸️☆°•____"),
-    ("𓆩🖤⃝ ", " 🕯☠"),
-    ("◄⏤ ", " ⏤►🩸"),
-    ("𓆩🔥 ", " 👑𓆪"),
-    ("✦ ", " ✦"),
-    ("⛧ ", " ☠"),
+    # Style 2 – small caps
+    {
+        "a":"ᴀ","b":"ʙ","c":"ᴄ","d":"ᴅ","e":"ᴇ","f":"ғ","g":"ɢ","h":"ʜ",
+        "i":"ɪ","j":"ᴊ","k":"ᴋ","l":"ʟ","m":"ᴍ","n":"ɴ","o":"ᴏ","p":"ᴘ",
+        "r":"ʀ","s":"s","t":"ᴛ","u":"ᴜ","v":"ᴠ","w":"ᴡ","y":"ʏ",
+    },
+
+    # Style 3 – cute / readable
+    {
+        "a":"α","b":"в","c":"c","d":"∂","e":"є","f":"ƒ","g":"g","h":"н",
+        "i":"ι","k":"к","l":"ℓ","m":"м","n":"η","o":"σ","p":"ρ",
+        "r":"я","s":"ѕ","t":"т","u":"υ","w":"ω","y":"у",
+    },
+
+    # Style 4 – dark bio
+    {
+        "a":"Δ","b":"β","d":"Ð","e":"Ξ","f":"Ғ","g":"Ǥ","h":"Ħ",
+        "i":"Ɨ","k":"Ҡ","l":"Ł","m":"₥","n":"₦","o":"Ø","p":"Ᵽ",
+        "r":"Ɽ","s":"Ϟ","t":"Ŧ","u":"Ʉ","w":"₩","y":"Ɏ",
+    },
+
+    # Style 5 – mix stylish
+    {
+        "a":"ä","b":"ɓ","c":"ç","d":"đ","e":"ë","f":"ƒ","g":"ğ","h":"ħ",
+        "i":"ï","k":"ķ","l":"ł","m":"ɱ","n":"ñ","o":"ö","p":"ρ",
+        "r":"ř","s":"ş","t":"ţ","u":"ü","w":"ω","y":"ÿ",
+    },
 ]
 
-# ================= NAME STYLES (AS GIVEN) =================
-STYLES = [  # (same list tumhari wali, untouched)
+def bio_convert(text: str, font: dict) -> str:
+    return "".join(font.get(ch.lower(), ch) for ch in text)
+
+# ================= NAME STYLES (AS YOU GAVE) =================
+STYLES = [
     ("𓂃❛ ⟶", "❜ 🌙⤹🌸"),
     ("❍⏤●", "●───♫▷"),
     ("🤍 ⍣⃪ ᶦ ᵃᵐ⛦⃕", "❛𝆺𝅥⤹࿗𓆪ꪾ™"),
-    # 🔥 baki sab tumhare styles yahin rahenge (unchanged)
 ]
 
 # ================= /name =================
 @app.on_message(filters.command("name"))
 async def stylish_name(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply_text("Usage: /name your_name")
+        return await message.reply_text("Usage: /name your name")
 
     text = convert(" ".join(message.command[1:]))
 
@@ -73,18 +89,19 @@ async def stylish_name(_, message: Message):
 
     await message.reply_text(out)
 
-# ================= /bio =================
+# ================= /bio (NEW SYSTEM) =================
 @app.on_message(filters.command("bio"))
 async def bio_style(_, message: Message):
     if len(message.command) < 2:
         return await message.reply_text("Usage: /bio your normal bio text")
 
     text = " ".join(message.command[1:])
-    fancy = bio_convert(text)
 
     out = "𓆩 𝐁ɪᴏ ꜱᴛʏʟᴇ 𓆪\n\n"
-    for pre, suf in BIO_STYLES:
-        out += f"{pre}{fancy}{suf}\n\n"
+
+    for font in BIO_FONTS:
+        fancy = bio_convert(text, font)
+        out += f"{fancy} ⚠️🕸️☆°•____\n\n"
 
     await message.reply_text(out)
 
